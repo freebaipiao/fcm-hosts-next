@@ -52,6 +52,10 @@ https://cagedbird.cn/fcm-hosts-next/fcm_dual.hosts
 数据变化时部署；手动运行会强制部署。部署成功后才提交数据，失败时保留旧版本。
 此工作流使用 GitHub 托管 runner，无需上游的探测服务器或 SSH 密钥。
 
+两个工作流均在任务开始时读取可选 Actions Secret `DOH_LOG_DOMAINS`，
+将其中每行一个的域名注册为日志掩码。Worker 域名变化时需同步更新该 Secret；
+掩码仅对后续运行生效。
+
 首次部署：
 
 1. 在仓库的 Settings → Secrets and variables → Actions 中添加

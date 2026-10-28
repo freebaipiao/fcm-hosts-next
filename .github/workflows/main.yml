@@ -29,6 +29,18 @@ jobs:
     timeout-minutes: 20
 
     steps:
+      - name: Mask domain names in logs
+        shell: bash
+        env:
+          LOG_MASK_DOMAINS: ${{ secrets.DOH_LOG_DOMAINS }}
+        run: |
+          while IFS= read -r domain; do
+            domain="${domain%$'\r'}"
+            if [ -n "$domain" ]; then
+              printf '::add-mask::%s\n' "$domain"
+            fi
+          done <<< "$LOG_MASK_DOMAINS"
+
       - name: Checkout repository
         uses: actions/checkout@v6
         with:

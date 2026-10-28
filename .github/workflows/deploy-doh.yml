@@ -22,6 +22,18 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:
+      - name: Mask domain names in logs
+        shell: bash
+        env:
+          LOG_MASK_DOMAINS: ${{ secrets.DOH_LOG_DOMAINS }}
+        run: |
+          while IFS= read -r domain; do
+            domain="${domain%$'\r'}"
+            if [ -n "$domain" ]; then
+              printf '::add-mask::%s\n' "$domain"
+            fi
+          done <<< "$LOG_MASK_DOMAINS"
+
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
       - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
