@@ -1,0 +1,16 @@
+{
+  "name": "fcm-static-doh",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "build": "wrangler deploy --dry-run --outdir .wrangler/dist",
+    "deploy": "wrangler deploy"
+  },
+  "dependencies": {
+    "dns-packet": "5.6.1"
+  },
+  "devDependencies": {
+    "wrangler": "^4.0.0"
+  }
+}

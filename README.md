@@ -41,6 +41,38 @@ https://cagedbird.cn/fcm-hosts-next/fcm_dual.hosts
 - 系统 hosts 定时拉取并原子覆盖。
 - sing-box / Clash 的 hosts 数据源。
 
+## Fork 附加功能：静态 DoH Worker
+
+`worker/` 提供 `/dns-query`，支持标准 DoH GET/POST。
+`mtalk.google.com` 的 A/AAAA 记录从上游已发布的双栈 Hosts 生成；
+该域名的其他查询类型返回空答案。其他域名优先使用 Cloudflare DoH，
+传输、HTTP 或报文错误时使用 Google DoH；正常 NXDOMAIN 不重试。
+
+新增工作流 [Update FCM DoH](.github/workflows/deploy-doh.yml) 每 6 小时检查一次数据。
+数据变化时部署；手动运行会强制部署。部署成功后才提交数据，失败时保留旧版本。
+此工作流使用 GitHub 托管 runner，无需上游的探测服务器或 SSH 密钥。
+
+首次部署：
+
+1. 在仓库的 Settings → Secrets and variables → Actions 中添加
+   `CLOUDFLARE_API_TOKEN` 和 `CLOUDFLARE_ACCOUNT_ID`。
+2. 在 Actions 中启用并运行 **Update FCM DoH**，保持 `deploy` 勾选。
+3. 使用部署日志显示的 Worker 地址，并在末尾添加 `/dns-query`。
+
+取消勾选 `deploy` 可以只运行数据、DoH 行为与 Worker 构建验证。
+下载失败或上游无有效记录时不会覆盖数据，也不会部署。
+
+本地验证新增功能：
+
+```bash
+python scripts/update_fcm.py
+python -m unittest discover -s scripts -p 'test_*.py'
+cd worker
+npm ci
+npm test
+npm run build
+```
+
 ## 本地运行
 
 ```bash
