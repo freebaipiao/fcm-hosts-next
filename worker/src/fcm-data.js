@@ -1,1 +1,1 @@
-export default {"mtalk.google.com":{"A":["74.125.137.188"],"AAAA":["2607:f8b0:400d:c20::bc"]}};
+export default {"mtalk.google.com":{"A":["192.179.30.188"],"AAAA":["2607:f8b0:4023:1009::bc"]}};
